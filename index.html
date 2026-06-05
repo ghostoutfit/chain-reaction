@@ -446,6 +446,27 @@
     position: relative;
   }
   .ctrl-box-pink input[type="range"] { width: 120px; }
+  .ctrl-box-label {
+    position: absolute;
+    bottom: 100%;
+    margin-bottom: 3px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .ctrl-box-label-pink {
+    right: 14px;
+    color: rgba(255,45,120,0.8);
+    text-shadow: 0 0 6px rgba(255,45,120,0.6), 0 0 16px rgba(255,45,120,0.3);
+  }
+  .ctrl-box-label-blue {
+    left: 14px;
+    color: var(--accent2);
+    opacity: 0.8;
+    text-shadow: 0 0 6px var(--accent2-glow), 0 0 16px var(--accent2-dim);
+  }
 
   /* ── NEW button nucleus wheel (pwheel-style hover dropdown) ────────────────── */
   .pwheel { position: relative; display: flex; flex-direction: column; align-self: stretch; }
@@ -918,12 +939,8 @@
 <div id="toolbar">
   <div class="toolbar-row">
     <div id="tabBar">
-      <a href="../v11/index.html" class="tab-btn">Protons</a>
-      <a href="../v11/index.html#nucleus" class="tab-btn">Investigate Stability</a>
       <button class="tab-btn active" data-tab="fission">Fission</button>
       <button class="tab-btn" data-tab="chain">Chain Reaction</button>
-      <a href="../v14/index.html#temp" class="tab-btn">Temperature</a>
-      <a href="../v14/index.html" class="tab-btn">Fusion</a>
     </div>
     <div style="display:flex;align-items:center;gap:6px;margin-left:auto;">
       <select id="qualitySelect">
@@ -949,6 +966,7 @@
 
     <!-- Pink box: New button + neutron speed + particle counters + Add fuel material -->
     <div class="ctrl-box-pink">
+      <span class="ctrl-box-label ctrl-box-label-pink">PARTICLES</span>
       <div class="pwheel" id="nucleusWheel">
         <button id="newBtn" class="btn" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;align-self:stretch;padding:6px 12px;">
           <canvas id="newBtnNucleus" width="96" height="42" style="display:block;flex-shrink:0;image-rendering:pixelated"></canvas>
@@ -1002,6 +1020,7 @@
 
     <!-- Blue box: stacked sliders + electric field + particles + forces -->
     <div class="ctrl-box-blue">
+      <span class="ctrl-box-label ctrl-box-label-blue">VISUALS</span>
       <div style="display:flex;flex-direction:column;gap:10px;justify-content:space-evenly;align-self:stretch">
         <div class="slider-group" id="playbackSpeedRow">
           <span class="slider-icon"><img src="../images/Turtle.png" style="height:0.85em;vertical-align:middle;display:block"></span>
