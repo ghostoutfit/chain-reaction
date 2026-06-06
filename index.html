@@ -1900,13 +1900,18 @@ function renderAtFrac(frac) {
   ctx.translate(-_W / 2, -_H / 2);
 
   // Chain tab: draw the main nucleus + fission animation (when active), then chain overlay
-  if (neutronState === 'fission') {
-    const ff = (currentScrubFrac - NEUTRON_FRAC) / (1 - NEUTRON_FRAC);
+  if (frac < NEUTRON_FRAC) {
+    if (!showParticles) drawCloudOutline(animParent.cx, animParent.cy, animParent.sphereR);
+    if (showParticles) drawParticles(animParent.particles, 0.85);
+    if (neutronState === 'idle') {
+      drawNeutron(PARTICLE_RADIUS + 60, animParent.cy);
+    } else {
+      drawNeutron(neutronX, neutronY);
+    }
+  } else {
+    const ff = (frac - NEUTRON_FRAC) / (1 - NEUTRON_FRAC);
     const t = PH1_END + ff * (FISS_STOP_T - PH1_END);
     drawAnimContent(t);
-  } else if (neutronState === 'idle' || neutronState === 'done') {
-    if (!showParticles) drawCloudOutline(animParent.cx, animParent.cy, animParent.sphereR);
-    if (showParticles) drawParticles(animParent.particles, 0.5);
   }
 
   drawChainOverlay();
