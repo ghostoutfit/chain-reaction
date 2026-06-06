@@ -691,13 +691,7 @@
     <!-- Blue box: particles + view mode -->
     <div class="ctrl-box-blue">
       <span class="ctrl-box-label ctrl-box-label-blue">VISUALS</span>
-      <div style="display:flex;flex-direction:column;gap:10px;justify-content:space-evenly;align-self:stretch">
-        <div class="slider-group" id="zoomSliderRow">
-          <span class="slider-icon" style="visibility:hidden"><img src="../images/Turtle.png" style="height:0.85em;vertical-align:middle;display:block"></span>
-          <input type="range" id="zoomSlider" min="-1" max="1" step="0.02" value="0">
-          <span class="slider-icon">🔍</span>
-        </div>
-      </div>
+      <input type="range" id="zoomSlider" min="-1" max="1" step="0.02" value="0" style="display:none">
       <div style="display:flex;gap:10px;align-self:stretch;align-items:center">
         <div style="display:flex;flex-direction:column;gap:4px">
           <button class="awheel-item active" data-pmode="particles" style="display:flex;align-items:center;gap:5px"><canvas id="particlesModeIcon" width="22" height="18" style="display:block;flex-shrink:0;image-rendering:pixelated"></canvas>Particles</button>
@@ -3085,13 +3079,13 @@ function drawChainBarChart() {
   ctx.save();
 
   // Panel background
-  ctx.fillStyle = LIGHT ? 'rgba(255,255,255,0.96)' : 'rgba(4,3,20,0.88)';
+  ctx.fillStyle = LIGHT ? 'rgba(255,255,255,0.96)' : 'rgba(8,6,30,0.94)';
   ctx.fillRect(gx, gy, PW, PH);
 
   // Left border glow
   ctx.save();
-  ctx.shadowColor = LIGHT ? 'rgba(0,0,0,0)' : 'rgba(0,200,255,0.4)'; ctx.shadowBlur = LIGHT ? 0 : 12;
-  ctx.strokeStyle = LIGHT ? 'rgba(0,0,0,0.20)' : 'rgba(0,180,255,0.25)'; ctx.lineWidth = 1;
+  ctx.shadowColor = LIGHT ? 'rgba(0,0,0,0)' : 'rgba(0,200,255,0.7)'; ctx.shadowBlur = LIGHT ? 0 : 18;
+  ctx.strokeStyle = LIGHT ? 'rgba(0,0,0,0.20)' : 'rgba(0,180,255,0.65)'; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(gx, gy); ctx.lineTo(gx, gy + PH); ctx.stroke();
   ctx.restore();
 
@@ -3125,7 +3119,7 @@ function drawChainBarChart() {
 
   bars.forEach((bar, i) => {
     const frac  = bar.value / CHAIN_ENERGY_MAX;
-    const barPx = frac * chartH;
+    const barPx = Math.max(4, frac * chartH);
     const x     = chartX + i * barW + barW * 0.1;
     const bw    = barW * 0.8;
     const barTop = baseline - barPx;
