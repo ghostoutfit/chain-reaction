@@ -739,10 +739,10 @@ function _applyQuality(level) {
   _quality = level;
   const el = document.getElementById('qualitySelect');
   if (el) el.value = level;
-  // hi-res:   all flags off (exact pre-session behavior)
+  // hi-res:   all flags off (exact pre-session behavior — full gradients)
   // detailed: flat fills + chain blobs
   // simple:   detailed + field freeze throttle
-  _flatFill      = true;
+  _flatFill      = level !== 'hi-res';
   _chainBlobMode = level !== 'hi-res';
 }
 
@@ -1321,10 +1321,10 @@ function drawParticles(particles, jitterScale = 1, radiusScale = 1, drawCtx = ct
         dc.beginPath(); dc.arc(px, py, R1, 0, Math.PI * 2); dc.fill();
         // Middle: mid color ring (matches v11 outer gradient color)
         dc.fillStyle = mid;
-        dc.beginPath(); dc.arc(px, py, R1 - wW, 0, Math.PI * 2); dc.fill();
+        dc.beginPath(); dc.arc(px, py, Math.max(0, R1 - wW), 0, Math.PI * 2); dc.fill();
         // Inner: core (lighter) fill — matches v11 bright center
         dc.fillStyle = core;
-        dc.beginPath(); dc.arc(px, py, R1 - wW - cW, 0, Math.PI * 2); dc.fill();
+        dc.beginPath(); dc.arc(px, py, Math.max(0, R1 - wW - cW), 0, Math.PI * 2); dc.fill();
       } else {
         // Simple: thin white stroke over mid fill (original appearance)
         dc.fillStyle = mid;
