@@ -2838,6 +2838,7 @@ document.getElementById('goBtn').addEventListener('click', () => {
   }
 
   // Fresh start
+  if (neutronRAF) { cancelAnimationFrame(neutronRAF); neutronRAF = null; }
   logAction('Pressed Go (CHAIN REACTION)');
   mainNeutronsEmitted = false; mainEnergyTransferred = false; mainDaughters = null;
   chainNeutrons       = []; lastChainTime = null;
@@ -2898,6 +2899,7 @@ document.getElementById('newBtn').addEventListener('click', (e) => {
   // Stage a fresh neutron — same as Stop but always available
   if (neutronRAF) { cancelAnimationFrame(neutronRAF); neutronRAF = null; }
   if (chainRAF)   { cancelAnimationFrame(chainRAF);   chainRAF = null; }
+  chainPaused         = false;
   neutronState        = 'idle';
   neutronLast         = 0;
   currentScrubFrac    = 0;
@@ -2929,6 +2931,7 @@ document.getElementById('clearBtn').addEventListener('click', () => {
   logAction('Pressed Reset');
   if (neutronRAF)  { cancelAnimationFrame(neutronRAF);  neutronRAF  = null; }
   if (chainRAF)    { cancelAnimationFrame(chainRAF);    chainRAF    = null; }
+  chainPaused         = false;
   neutronState        = 'idle';
   neutronLast         = 0;
   currentScrubFrac    = 0;
@@ -2984,7 +2987,7 @@ document.getElementById('qualitySelect').addEventListener('change', function() {
 let idleParticleRAF = null;
 function idleParticleLoop() {
   if (!showParticles) { idleParticleRAF = null; return; }
-  if ((neutronState === 'idle' || neutronState === 'done') && animParent) {
+  if ((neutronState === 'idle' || neutronState === 'done') && animParent && !chainRAF) {
     updateParticleJitter(animParent.particles.length, 1, true);
     drawStaticFrame();
   }
@@ -3003,7 +3006,9 @@ function clientToWorld(clientX, clientY) {
   const rect = canvas.getBoundingClientRect();
   const sx = clientX - rect.left, sy = clientY - rect.top;
   const W = canvas.width, H = canvas.height;
-  return { x: (sx - W/2) / viewZoom + W/2, y: (sy - H/2) / viewZoom + H/2 };
+  const toolbarH = document.getElementById('toolbar').offsetHeight;
+  const _centerY = (toolbarH + H) / 2;
+  return { x: (sx - W/2) / viewZoom + W/2, y: (sy - _centerY) / viewZoom + H/2 };
 }
 
 function moveAnimParent(newCx, newCy) {
