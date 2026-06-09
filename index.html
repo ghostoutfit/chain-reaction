@@ -2559,15 +2559,16 @@ function drawNeutronIcon() {
   drawNeutronIconToCanvas(document.getElementById('neutronIconCanvas'));
 }
 
+let _neutronIconRAF = null;
 function neutronIconLoop() {
   neutronIconJitter.x += (Math.random() - 0.5) * 0.7;
   neutronIconJitter.y += (Math.random() - 0.5) * 0.7;
   neutronIconJitter.x *= 0.78;
   neutronIconJitter.y *= 0.78;
   drawNeutronIcon();
-  requestAnimationFrame(neutronIconLoop);
+  _neutronIconRAF = requestAnimationFrame(neutronIconLoop);
 }
-neutronIconLoop();
+if (!_neutronIconRAF) neutronIconLoop();
 
 // ─── Nucleus button icon (New button) ─────────────────────────────────────────
 // Sphere-packed particles for the NEW button icon canvas.
@@ -2740,6 +2741,7 @@ function drawOutlineIcon() {
 }
 
 let _iconLast = -67;
+let _nucleusIconRAF = null;
 function nucleusIconLoop(now) {
   if (now - _iconLast >= 67) {   // ~15 fps
     _iconLast = now;
@@ -2773,9 +2775,9 @@ function nucleusIconLoop(now) {
     }
     drawMiniNucleusIcon(document.getElementById('particlesModeIcon'));
   }
-  requestAnimationFrame(nucleusIconLoop);
+  _nucleusIconRAF = requestAnimationFrame(nucleusIconLoop);
 }
-nucleusIconLoop(0);
+if (!_nucleusIconRAF) nucleusIconLoop(0);
 drawOutlineIcon();
 
 // ─── Controls ─────────────────────────────────────────────────────────────────
