@@ -3099,11 +3099,12 @@ function drawChainBarChart() {
   ctx.fillStyle = LIGHT ? 'rgba(255,255,255,0.96)' : 'rgba(8,6,30,0.94)';
   ctx.fillRect(gx, gy, PW, PH);
 
-  // Left border glow
+  // Left and bottom border glow
   ctx.save();
   ctx.shadowColor = LIGHT ? 'rgba(0,0,0,0)' : 'rgba(0,200,255,0.7)'; ctx.shadowBlur = LIGHT ? 0 : 18;
   ctx.strokeStyle = LIGHT ? 'rgba(0,0,0,0.20)' : 'rgba(0,180,255,0.65)'; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(gx, gy); ctx.lineTo(gx, gy + PH); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(gx, gy + PH); ctx.lineTo(gx + PW, gy + PH); ctx.stroke();
   ctx.restore();
 
   const bars = LIGHT
