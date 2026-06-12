@@ -1313,8 +1313,8 @@ function drawParticles(particles, jitterScale = 1, radiusScale = 1, drawCtx = ct
       if (_quality !== 'simple') {
         // Hi-res / Detailed: layered rings matching v11 particle appearance
         // Draw back-to-front using filled circles so rings never bleed inside
-        const cW = 4 / viewZoom;   // colored mid-ring width (screen px)
-        const wW = 1 / viewZoom;   // dark gray outline width (screen px)
+        const cW = 4;   // colored mid-ring width (world px — scales with zoom)
+        const wW = 1;   // dark gray outline width (world px — scales with zoom)
         const R1 = R * 1.1;
         // Outermost: dark gray ring
         dc.fillStyle = 'rgba(40,40,40,0.85)';
@@ -1330,7 +1330,7 @@ function drawParticles(particles, jitterScale = 1, radiusScale = 1, drawCtx = ct
         dc.fillStyle = mid;
         dc.beginPath(); dc.arc(px, py, R, 0, Math.PI * 2); dc.fill();
         dc.strokeStyle = 'rgba(255,255,255,0.45)';
-        dc.lineWidth = 1 / viewZoom;
+        dc.lineWidth = 1;
         dc.stroke();
       }
     } else {
@@ -3000,6 +3000,15 @@ function setParticleWheelActive(targetBtn) {
   document.querySelectorAll('.awheel-item[data-pmode]').forEach(b => b.classList.remove('active'));
   targetBtn.classList.add('active');
 }
+
+document.querySelectorAll('.awheel-item[data-pmode]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    showParticles = btn.dataset.pmode === 'particles';
+    setParticleWheelActive(btn);
+    if (showParticles && !idleParticleRAF) idleParticleLoop();
+    drawStaticFrame();
+  });
+});
 
 // ─── Site dragging (chain tab) ──────────────────────────────────────────────────────────
 let chainSiteDrag  = null;  // { target, offX, offY } during chain-tab site drag
