@@ -3048,6 +3048,7 @@ function pickChainSite(clientX, clientY) {
 }
 
 canvas.addEventListener('mousedown', (e) => {
+  if (neutronState !== 'idle') return;  // disable drag once reaction starts
   const hit = pickChainSite(e.clientX, e.clientY);
   if (hit) {
     chainSiteDrag = hit;
@@ -3058,7 +3059,7 @@ canvas.addEventListener('mousedown', (e) => {
 
 canvas.addEventListener('mousemove', (e) => {
   if (chainSiteDrag) return;  // window listener handles the drag
-  canvas.style.cursor = pickChainSite(e.clientX, e.clientY) ? 'grab' : '';
+  canvas.style.cursor = (neutronState === 'idle' && pickChainSite(e.clientX, e.clientY)) ? 'grab' : '';
 });
 
 window.addEventListener('mousemove', (e) => {
