@@ -2369,7 +2369,11 @@ function ensureChainLoop() {
                         enrichSites.some(s => s.state === 'fission' || s.daughters) ||
                         mainDaughters !== null;
     chainRAF = stillActive ? requestAnimationFrame(chainTick) : null;
-    if (!chainRAF) markPrerenderDone();
+    if (!chainRAF) {
+      markPrerenderDone();
+      document.getElementById('goBtn').textContent = '▶ GO';
+      document.getElementById('goBtn').classList.remove('running');
+    }
   }
   chainRAF = requestAnimationFrame(chainTick);
 }
@@ -2480,8 +2484,6 @@ function fissionTick(now) {
     neutronRAF = requestAnimationFrame(fissionTick);
   } else {
     neutronState = 'done';
-    document.getElementById('goBtn').textContent = '▶ GO';
-    document.getElementById('goBtn').classList.remove('running');
     ensureChainLoop();
   }
 }
