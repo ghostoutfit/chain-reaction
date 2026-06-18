@@ -2973,7 +2973,7 @@ document.getElementById('enrichBtn').addEventListener('click', () => {
                          angle: 0, shakeDur: 600, neutronsEmitted: false,
                          viewAngle: Math.random() * Math.PI * 2,
                          isControl: isCtrl,
-                         sphereR: animParent.sphereR * (isCtrl ? CONTROL_SITE_SCALE : 1),
+                         sphereR: isCtrl ? animControl.sphereR : animParent.sphereR,
                          img: isCtrl ? _imgControl : _imgParent });
       if (!isCtrl) { totalFuelAdded++; energyInFields++; }
     }
