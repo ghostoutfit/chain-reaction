@@ -292,39 +292,39 @@
     border-color: #ffdd00;
     color: rgba(255,255,255,0.5);
     background: rgba(255,221,0,0.07);
-    margin-top: 5px;
+    margin-top: 20px;
     box-shadow:
-      inset 0 0 6px rgba(255,221,0,0.12),
+      inset 0 0 6px rgba(255,221,0,0.08),
       0 0 2px #ffdd00,
       0 0 8px #ffdd00,
-      0 0 18px rgba(255,221,0,0.5),
-      0 0 40px rgba(255,221,0,0.2),
-      0 0 70px rgba(255,221,0,0.1);
+      0 0 18px rgba(255,221,0,0.35),
+      0 0 40px rgba(255,221,0,0.14),
+      0 0 70px rgba(255,221,0,0.07);
     text-shadow:
-      0 0 4px rgba(255,255,255,0.5),
+      0 0 4px rgba(255,255,255,0.35),
       0 0 10px #ffdd00,
-      0 0 22px rgba(255,221,0,0.7),
-      0 0 44px rgba(255,221,0,0.3);
+      0 0 22px rgba(255,221,0,0.49),
+      0 0 44px rgba(255,221,0,0.21);
   }
-  #controlRodBtn:hover, #controlRodBtn.rods-active:hover { background: rgba(255,221,0,0.18); }
+  #controlRodBtn:hover, #controlRodBtn.rods-active:hover { background: rgba(255,221,0,0.13); }
   #enrichBtn.ctrl-selected {
     border-color: #ffdd00;
     color: rgba(255,255,255,0.5);
     background: rgba(255,221,0,0.07);
     box-shadow:
-      inset 0 0 6px rgba(255,221,0,0.12),
+      inset 0 0 6px rgba(255,221,0,0.08),
       0 0 2px #ffdd00,
       0 0 8px #ffdd00,
-      0 0 18px rgba(255,221,0,0.5),
-      0 0 40px rgba(255,221,0,0.2),
-      0 0 70px rgba(255,221,0,0.1);
+      0 0 18px rgba(255,221,0,0.35),
+      0 0 40px rgba(255,221,0,0.14),
+      0 0 70px rgba(255,221,0,0.07);
     text-shadow:
-      0 0 4px rgba(255,255,255,0.5),
+      0 0 4px rgba(255,255,255,0.35),
       0 0 10px #ffdd00,
-      0 0 22px rgba(255,221,0,0.7),
-      0 0 44px rgba(255,221,0,0.3);
+      0 0 22px rgba(255,221,0,0.49),
+      0 0 44px rgba(255,221,0,0.21);
   }
-  #enrichBtn.ctrl-selected:hover { background: rgba(255,221,0,0.18); }
+  #enrichBtn.ctrl-selected:hover { background: rgba(255,221,0,0.13); }
   #enrichBtn:hover {
     background: rgba(0,255,170,0.18);
     box-shadow:
@@ -1550,8 +1550,17 @@ function applyTab(tab) {
   viewZoom = zoomFromSlider(-0.6);
   fixedContainerBounds = computeContainerBounds();
   totalFuelAdded = 1; energyInFields = 1; energyInMotion = 0;
-  document.getElementById('enrichBtn').style.display = '';
-  document.getElementById('controlRodBtn').style.display = '';
+  const _enBtn = document.getElementById('enrichBtn');
+  const _crBtn = document.getElementById('controlRodBtn');
+  _enBtn.style.display = '';
+  _crBtn.style.display = '';
+  // Lock each button to its wider text state so width never shifts
+  _enBtn.textContent = 'Add control material';
+  _enBtn.style.width = _enBtn.offsetWidth + 'px';
+  _enBtn.textContent = 'Add fuel material';
+  _crBtn.textContent = 'Remove Control Rods';
+  _crBtn.style.width = _crBtn.offsetWidth + 'px';
+  _crBtn.textContent = 'Insert Control Rods';
   heatmapDirty = true;
   if (typeof drawStaticFrame === 'function') drawStaticFrame();
   if (showParticles && !idleParticleRAF && typeof idleParticleLoop === 'function') idleParticleLoop();
@@ -2313,10 +2322,11 @@ function drawChainOverlay() {
   }
 
   // Control rods — drawn first (underneath everything)
-  if (controlRodsActive && controlRodPositions.length > 0 && _imgControl) {
+  if (controlRodsActive && controlRodPositions.length > 0) {
     const agR = animControl ? animControl.sphereR : 30;
     for (const rod of controlRodPositions) {
-      drawChainSiteBlob(rod.x, rod.y, agR, _imgControl, 0);
+      if (showParticles) drawChainSiteBlob(rod.x, rod.y, agR, _imgControl, 0);
+      else drawCloudOutline(rod.x, rod.y, agR);
     }
   }
 
