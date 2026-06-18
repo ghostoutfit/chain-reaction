@@ -288,6 +288,42 @@
       0 0 22px rgba(0,255,170,0.7),
       0 0 44px rgba(0,255,170,0.3);
   }
+  #controlRodBtn {
+    border-color: #00cc55;
+    color: rgba(255,255,255,0.5);
+    background: rgba(0,204,85,0.07);
+    box-shadow:
+      inset 0 0 6px rgba(0,204,85,0.12),
+      0 0 2px #00cc55,
+      0 0 8px #00cc55,
+      0 0 18px rgba(0,204,85,0.5),
+      0 0 40px rgba(0,204,85,0.2),
+      0 0 70px rgba(0,204,85,0.1);
+    text-shadow:
+      0 0 4px rgba(255,255,255,0.5),
+      0 0 10px #00cc55,
+      0 0 22px rgba(0,204,85,0.7),
+      0 0 44px rgba(0,204,85,0.3);
+  }
+  #controlRodBtn:hover { background: rgba(0,204,85,0.18); }
+  #controlRodBtn.rods-active {
+    border-color: #ff6622;
+    color: rgba(255,255,255,0.5);
+    background: rgba(255,102,34,0.07);
+    box-shadow:
+      inset 0 0 6px rgba(255,102,34,0.12),
+      0 0 2px #ff6622,
+      0 0 8px #ff6622,
+      0 0 18px rgba(255,102,34,0.5),
+      0 0 40px rgba(255,102,34,0.2),
+      0 0 70px rgba(255,102,34,0.1);
+    text-shadow:
+      0 0 4px rgba(255,255,255,0.5),
+      0 0 10px #ff6622,
+      0 0 22px rgba(255,102,34,0.7),
+      0 0 44px rgba(255,102,34,0.3);
+  }
+  #controlRodBtn.rods-active:hover { background: rgba(255,102,34,0.18); }
   #enrichBtn:hover {
     background: rgba(0,255,170,0.18);
     box-shadow:
@@ -678,14 +714,8 @@
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:5px;align-items:stretch;">
-        <div class="slider-group">
-          <div style="display:flex;align-items:center;gap:1px">
-            <canvas id="speedLinesCanvas" width="50" height="46" style="display:block;flex-shrink:0;image-rendering:pixelated"></canvas>
-            <canvas id="neutronIconCanvas" width="46" height="46" style="display:block;flex-shrink:0;image-rendering:pixelated"></canvas>
-          </div>
-          <div id="neutronSpeedWrap"><input type="range" id="neutronSpeed" min="0.2" max="8.0" step="0.1" value="4.0"></div>
-        </div>
         <button id="enrichBtn" class="btn" style="display:none;">Add fuel material</button>
+        <button id="controlRodBtn" class="btn" style="display:none;">Insert Control Rods</button>
       </div>
     </div>
 
@@ -1510,6 +1540,7 @@ function applyTab(tab) {
   fixedContainerBounds = computeContainerBounds();
   totalFuelAdded = 1; energyInFields = 1; energyInMotion = 0;
   document.getElementById('enrichBtn').style.display = '';
+  document.getElementById('controlRodBtn').style.display = '';
   heatmapDirty = true;
   if (typeof drawStaticFrame === 'function') drawStaticFrame();
   if (showParticles && !idleParticleRAF && typeof idleParticleLoop === 'function') idleParticleLoop();
@@ -1951,6 +1982,24 @@ const ENRICH_ZOOM_SHOW = 0.6;  // show Enrich button at this zoom or below
 
 // ─── Enrich / chain-reaction system ──────────────────────────────────────────
 let enrichSites   = [];    // [{cx,cy,state,fissStart,fissT,angle,shakeDur,neutronsEmitted}]
+let controlRodsActive   = false;
+let controlRodPositions = []; // [{x,y}] world coords
+
+function generateControlRods() {
+  if (!animControl) return;
+  const agR = animControl.sphereR;
+  const b = chainContainerBounds();
+  // ~5 rods on a full-width screen; fewer on smaller screens
+  const numRods = Math.max(1, Math.round(5 * canvas.width / 1440));
+  const spacing = b.w / numRods;
+  controlRodPositions = [];
+  for (let col = 0; col < numRods; col++) {
+    const wx = b.x + spacing * (col + 0.5);
+    for (let wy = b.y + agR; wy <= b.y + b.h - agR + 0.1; wy += agR * 2) {
+      controlRodPositions.push({ x: wx, y: wy });
+    }
+  }
+}
 let chainNeutrons = [];    // [{x,y,vx,vy}]
 let chainRAF      = null;
 let lastChainTime = null;
@@ -2045,6 +2094,19 @@ function updateChain(now) {
         chainNeutrons.splice(i, 1);
         absorbed = true;
         break;
+      }
+    }
+    if (absorbed) continue;
+    // Control rods absorb neutrons
+    if (controlRodsActive) {
+      const agR = animControl ? animControl.sphereR : 30;
+      const captureR = agR + PARTICLE_RADIUS;
+      for (const rod of controlRodPositions) {
+        if (Math.hypot(n.x - rod.x, n.y - rod.y) < captureR) {
+          chainNeutrons.splice(i, 1);
+          absorbed = true;
+          break;
+        }
       }
     }
     if (absorbed) continue;
@@ -2237,6 +2299,14 @@ function drawChainOverlay() {
     ctx.shadowColor = 'rgba(255, 180, 50, 0.7)';
     ctx.strokeRect(b.x, b.y, b.w, b.h);
     ctx.restore();
+  }
+
+  // Control rods — drawn first (underneath everything)
+  if (controlRodsActive && controlRodPositions.length > 0 && _imgControl) {
+    const agR = animControl ? animControl.sphereR : 30;
+    for (const rod of controlRodPositions) {
+      drawChainSiteBlob(rod.x, rod.y, agR, _imgControl, 0);
+    }
   }
 
   // Helper: draw wobbling fission animation for a site in fission state pre-split
@@ -2927,6 +2997,21 @@ document.getElementById('zoomSlider').addEventListener('input', function () {
   drawStaticFrame();
 });
 
+document.getElementById('controlRodBtn').addEventListener('click', () => {
+  const btn = document.getElementById('controlRodBtn');
+  controlRodsActive = !controlRodsActive;
+  if (controlRodsActive) {
+    generateControlRods();
+    btn.textContent = 'Remove Control Rods';
+    btn.classList.add('rods-active');
+  } else {
+    controlRodPositions = [];
+    btn.textContent = 'Insert Control Rods';
+    btn.classList.remove('rods-active');
+  }
+  drawStaticFrame();
+});
+
 document.getElementById('clearBtn').addEventListener('click', () => {
   logAction('Pressed Reset');
   if (neutronRAF)  { cancelAnimationFrame(neutronRAF);  neutronRAF  = null; }
@@ -2939,6 +3024,10 @@ document.getElementById('clearBtn').addEventListener('click', () => {
   mainNeutronsEmitted = false; mainEnergyTransferred = false; mainDaughters = null;
   chainNeutrons       = []; lastChainTime = null;
   enrichSites         = []; isFirstChainFission = true;
+  controlRodsActive   = false; controlRodPositions = [];
+  const crBtn = document.getElementById('controlRodBtn');
+  crBtn.textContent = 'Insert Control Rods';
+  crBtn.classList.remove('rods-active');
   totalFuelAdded = 0; energyInFields = 0; energyInMotion = 0;
   heatmapDirty        = true;
   document.getElementById('goBtn').textContent = '▶ GO';
