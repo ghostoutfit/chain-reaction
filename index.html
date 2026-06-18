@@ -714,6 +714,11 @@
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:5px;align-items:stretch;">
+        <div style="display:none;">
+          <canvas id="speedLinesCanvas" width="50" height="46" style="display:block;image-rendering:pixelated"></canvas>
+          <canvas id="neutronIconCanvas" width="46" height="46" style="display:block;image-rendering:pixelated"></canvas>
+          <div id="neutronSpeedWrap"><input type="range" id="neutronSpeed" min="0.2" max="8.0" step="0.1" value="4.0"></div>
+        </div>
         <button id="enrichBtn" class="btn" style="display:none;">Add fuel material</button>
         <button id="controlRodBtn" class="btn" style="display:none;">Insert Control Rods</button>
       </div>
