@@ -838,6 +838,7 @@ window.addEventListener('resize', () => {
       if (site.daughters) site.daughters = site.daughters.filter(d => !outsideBounds(d.x, d.y, d.r));
     }
     enrichSites = enrichSites.filter(s => !outsideBounds(s.cx, s.cy, animParent ? animParent.sphereR : 40));
+    if (controlRodsActive) generateControlRods();
     chainParticleOffsets = null;
     drawStaticFrame();
   }
@@ -1995,7 +1996,7 @@ function generateControlRods() {
   const agR = animControl.sphereR;
   const b = chainContainerBounds();
   // ~5 rods on a full-width screen; fewer on smaller screens
-  const numRods = Math.max(1, Math.round(5 * canvas.width / 1440));
+  const numRods = Math.max(1, Math.round(6.5 * canvas.width / 1440));
   const spacing = b.w / numRods;
   controlRodPositions = [];
   for (let col = 0; col < numRods; col++) {
