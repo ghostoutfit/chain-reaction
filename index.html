@@ -2369,11 +2369,7 @@ function ensureChainLoop() {
                         enrichSites.some(s => s.state === 'fission' || s.daughters) ||
                         mainDaughters !== null;
     chainRAF = stillActive ? requestAnimationFrame(chainTick) : null;
-    if (!chainRAF) {
-      markPrerenderDone();
-      document.getElementById('goBtn').textContent = '▶ GO';
-      document.getElementById('goBtn').classList.remove('running');
-    }
+    if (!chainRAF) markPrerenderDone();
   }
   chainRAF = requestAnimationFrame(chainTick);
 }
