@@ -838,7 +838,11 @@ window.addEventListener('resize', () => {
       if (site.daughters) site.daughters = site.daughters.filter(d => !outsideBounds(d.x, d.y, d.r));
     }
     enrichSites = enrichSites.filter(s => !outsideBounds(s.cx, s.cy, animParent ? animParent.sphereR : 40));
-    if (controlRodsActive) generateControlRods();
+    if (controlRodsActive) {
+      generateControlRods();
+      const agR = animControl ? animControl.sphereR : 30;
+      controlRodPositions = controlRodPositions.filter(r => !outsideBounds(r.x, r.y, agR));
+    }
     chainParticleOffsets = null;
     drawStaticFrame();
   }
