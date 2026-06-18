@@ -289,24 +289,25 @@
       0 0 44px rgba(0,255,170,0.3);
   }
   #controlRodBtn {
-    border-color: #00cc55;
+    border-color: #ff6622;
     color: rgba(255,255,255,0.5);
-    background: rgba(0,204,85,0.07);
+    background: rgba(255,102,34,0.07);
+    margin-top: 5px;
     box-shadow:
-      inset 0 0 6px rgba(0,204,85,0.12),
-      0 0 2px #00cc55,
-      0 0 8px #00cc55,
-      0 0 18px rgba(0,204,85,0.5),
-      0 0 40px rgba(0,204,85,0.2),
-      0 0 70px rgba(0,204,85,0.1);
+      inset 0 0 6px rgba(255,102,34,0.12),
+      0 0 2px #ff6622,
+      0 0 8px #ff6622,
+      0 0 18px rgba(255,102,34,0.5),
+      0 0 40px rgba(255,102,34,0.2),
+      0 0 70px rgba(255,102,34,0.1);
     text-shadow:
       0 0 4px rgba(255,255,255,0.5),
-      0 0 10px #00cc55,
-      0 0 22px rgba(0,204,85,0.7),
-      0 0 44px rgba(0,204,85,0.3);
+      0 0 10px #ff6622,
+      0 0 22px rgba(255,102,34,0.7),
+      0 0 44px rgba(255,102,34,0.3);
   }
-  #controlRodBtn:hover { background: rgba(0,204,85,0.18); }
-  #controlRodBtn.rods-active {
+  #controlRodBtn:hover, #controlRodBtn.rods-active:hover { background: rgba(255,102,34,0.18); }
+  #enrichBtn.ctrl-selected {
     border-color: #ff6622;
     color: rgba(255,255,255,0.5);
     background: rgba(255,102,34,0.07);
@@ -323,7 +324,7 @@
       0 0 22px rgba(255,102,34,0.7),
       0 0 44px rgba(255,102,34,0.3);
   }
-  #controlRodBtn.rods-active:hover { background: rgba(255,102,34,0.18); }
+  #enrichBtn.ctrl-selected:hover { background: rgba(255,102,34,0.18); }
   #enrichBtn:hover {
     background: rgba(0,255,170,0.18);
     box-shadow:
@@ -2951,8 +2952,9 @@ function selectNucleus(key) {
     el.classList.toggle('selected', el.dataset.key === key);
   });
   document.getElementById('nucleusWheel').classList.remove('open');
-  document.getElementById('enrichBtn').textContent =
-    key === 'ag107' ? 'Add control material' : 'Add fuel material';
+  const enrichBtn = document.getElementById('enrichBtn');
+  enrichBtn.textContent = key === 'ag107' ? 'Add control material' : 'Add fuel material';
+  enrichBtn.classList.toggle('ctrl-selected', key === 'ag107');
   // Immediately show the selected nucleus centred — when idle or after fission is done
   if (neutronState === 'idle' || neutronState === 'done') {
     currentSeed = Math.floor(Math.random() * 1e9);
